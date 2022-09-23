@@ -28,7 +28,7 @@ public class VectorMosaicTest {
         try {
             REPOSITORY = new DefaultRepository();
 
-            URL url = new URL("file:///home/PIXIA.LOCAL/millerj/data/tiger/tileindex_tiger.fgb");
+            URL url = new URL("file:///home/millerj/data/tiger/tileindex_tiger.fgb");
 
             FlatGeobufDataStore ds =
                      new FlatGeobufDataStore(url);
