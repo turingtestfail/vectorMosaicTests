@@ -27,7 +27,7 @@ public class VectorMosaicTest {
         try {
             REPOSITORY = new DefaultRepository();
 
-            URL url = new URL("file:///home/PIXIA.LOCAL/millerj/data/tiger/tileindex_tiger.shp");
+            URL url = new URL("file:///home/millerj/data/tiger/tileindex_tiger.shp");
 
             ShapefileDataStore ds =
                     (ShapefileDataStore) new ShapefileDataStoreFactory().createDataStore(url);
