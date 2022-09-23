@@ -2,6 +2,7 @@ package org.geotools.vectormosaic;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultRepository;
+import org.geotools.data.flatgeobuf.FlatGeobufDataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
@@ -27,10 +28,10 @@ public class VectorMosaicTest {
         try {
             REPOSITORY = new DefaultRepository();
 
-            URL url = new URL("file:///home/millerj/data/tiger/tileindex_tiger.shp");
+            URL url = new URL("file:///home/PIXIA.LOCAL/millerj/data/tiger/tileindex_tiger.fgb");
 
-            ShapefileDataStore ds =
-                    (ShapefileDataStore) new ShapefileDataStoreFactory().createDataStore(url);
+            FlatGeobufDataStore ds =
+                     new FlatGeobufDataStore(url);
             REPOSITORY.register("delegate", ds);
             VECTOR_MOSAIC_STORE_FACTORY = new VectorMosaicStoreFactory();
             Map<String, Object> params = new HashMap<>();
