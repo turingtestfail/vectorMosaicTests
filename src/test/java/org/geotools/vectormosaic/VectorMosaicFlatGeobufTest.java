@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class VectorMosaicFlatGeobufTest extends VectorMosaicTest{
     @Test
@@ -49,5 +50,21 @@ public class VectorMosaicFlatGeobufTest extends VectorMosaicTest{
         assertEquals(8, tracker.size());
         Instant finish = Instant.now();
         long timeElapsed = Duration.between(start, finish).toMillis();
+        Instant start2 = Instant.now();
+        SimpleFeatureCollection fcAll = featureSource.getFeatures();
+        try (SimpleFeatureIterator iterator = fcAll.features(); ) {
+            int count = 0;
+            while (iterator.hasNext()) {
+                iterator.next();
+                count++;
+            }
+            assertEquals(32178, count);
+        }
+        assertEquals(55, tracker.size());
+        Instant finish2 = Instant.now();
+        long timeElapsed2 = Duration.between(start2, finish2).toMillis();
+        System.out.println("Mosaic Query Time elapsed: " + timeElapsed + "ms");
+        System.out.println("Mosaic All Features Time elapsed: " + timeElapsed2 + "ms");
+        assertTrue(timeElapsed < timeElapsed2);
     }
 }
