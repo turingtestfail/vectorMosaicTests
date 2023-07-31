@@ -71,19 +71,68 @@ public class VectorMosaicFlatGeobufTest extends VectorMosaicTest{
     }
 
     @Test
-    public void testGetMax() throws Exception {
+    public void testGetMaxIndexHasExpressionAndFilter() throws Exception {
         Instant start = Instant.now();
         SimpleFeatureSource featureSource = MOSAIC_STORE.getFeatureSource(MOSAIC_TYPE_NAME);
         Set<String> tracker = new HashSet<>();
         ((VectorMosaicFeatureSource) featureSource).granuleTracker = tracker;
         PropertyName p = FF.property("rank");
         Query q = new Query();
-        q.setPropertyNames(new String[]{"rank"});
         Filter f = FF.lessOrEqual(p, FF.literal(100));
         q.setFilter(f);
 
         MaxVisitor v = new MaxVisitor(p);
         ((VectorMosaicFeatureSource) featureSource).accepts(q, v,null);
-        int max = (int) v.getMax();
+        int max = v.getResult().toInt();
+        assertEquals(55,max);
+    }
+    @Test
+    public void testGetMaxIndexHasExpressionNoFilter() throws Exception {
+        Instant start = Instant.now();
+        SimpleFeatureSource featureSource = MOSAIC_STORE.getFeatureSource(MOSAIC_TYPE_NAME);
+        Set<String> tracker = new HashSet<>();
+        ((VectorMosaicFeatureSource) featureSource).granuleTracker = tracker;
+        PropertyName p = FF.property("rank");
+        Query q = new Query();
+
+        MaxVisitor v = new MaxVisitor(p);
+        ((VectorMosaicFeatureSource) featureSource).accepts(q, v,null);
+        int max = v.getResult().toInt();
+        assertEquals(55,max);
+    }
+    @Test
+    public void testGetMaxIndexHasExpressionFilterDoesNotMatch() throws Exception {
+        Instant start = Instant.now();
+        SimpleFeatureSource featureSource = MOSAIC_STORE.getFeatureSource(MOSAIC_TYPE_NAME);
+        Set<String> tracker = new HashSet<>();
+        ((VectorMosaicFeatureSource) featureSource).granuleTracker = tracker;
+
+        Query q = new Query();
+
+        PropertyName p = FF.property("NAME");
+        Filter f = FF.equals(p, FF.literal("Irondale"));
+        q.setFilter(f);
+        MaxVisitor v = new MaxVisitor(p);
+        ((VectorMosaicFeatureSource) featureSource).accepts(q, v,null);
+        int max = v.getResult().toInt();
+        assertEquals(0,max);
+    }
+    @Test
+    public void testGetMaxIndexDoesNotHaveExpressionThatMatches() throws Exception {
+        Instant start = Instant.now();
+        SimpleFeatureSource featureSource = MOSAIC_STORE.getFeatureSource(MOSAIC_TYPE_NAME);
+        Set<String> tracker = new HashSet<>();
+        ((VectorMosaicFeatureSource) featureSource).granuleTracker = tracker;
+
+        Query q = new Query();
+
+        PropertyName p = FF.property("rank");
+        Filter f = FF.lessOrEqual(p, FF.literal(100));
+        q.setFilter(f);
+        PropertyName granuleOnly = FF.property("ALAND");
+        MaxVisitor v = new MaxVisitor(granuleOnly);
+        ((VectorMosaicFeatureSource) featureSource).accepts(q, v,null);
+        int max = v.getResult().toInt();
+        assertEquals(-1156518829,max);
     }
 }
