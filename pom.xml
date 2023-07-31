@@ -11,7 +11,7 @@
   <properties>
     <junit-platform.version>1.9.0</junit-platform.version>
     <junit-jupiter.version>5.9.0</junit-jupiter.version>
-    <geotools.version>28-SNAPSHOT</geotools.version>
+    <geotools.version>30-SNAPSHOT</geotools.version>
   </properties>
   <dependencies>
     <dependency>

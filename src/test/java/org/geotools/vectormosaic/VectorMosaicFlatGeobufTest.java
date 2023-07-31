@@ -4,6 +4,7 @@ import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.visitor.MaxVisitor;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
@@ -12,6 +13,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.WKTReader;
 import org.opengis.filter.Filter;
+import org.opengis.filter.expression.PropertyName;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -66,5 +68,22 @@ public class VectorMosaicFlatGeobufTest extends VectorMosaicTest{
         System.out.println("Mosaic Query Time elapsed: " + timeElapsed + "ms");
         System.out.println("Mosaic All Features Time elapsed: " + timeElapsed2 + "ms");
         assertTrue(timeElapsed < timeElapsed2);
+    }
+
+    @Test
+    public void testGetMax() throws Exception {
+        Instant start = Instant.now();
+        SimpleFeatureSource featureSource = MOSAIC_STORE.getFeatureSource(MOSAIC_TYPE_NAME);
+        Set<String> tracker = new HashSet<>();
+        ((VectorMosaicFeatureSource) featureSource).granuleTracker = tracker;
+        PropertyName p = FF.property("rank");
+        Query q = new Query();
+        q.setPropertyNames(new String[]{"rank"});
+        Filter f = FF.lessOrEqual(p, FF.literal(100));
+        q.setFilter(f);
+
+        MaxVisitor v = new MaxVisitor(p);
+        ((VectorMosaicFeatureSource) featureSource).accepts(q, v,null);
+        int max = (int) v.getMax();
     }
 }
