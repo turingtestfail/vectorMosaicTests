@@ -28,8 +28,9 @@ public class VectorMosaicFlatGeobufTest extends VectorMosaicTest{
     public void testGetCount() throws Exception {
         Instant start = Instant.now();
         SimpleFeatureSource featureSource = MOSAIC_STORE.getFeatureSource(MOSAIC_TYPE_NAME);
-        Set<String> tracker = new HashSet<>();
-        ((VectorMosaicFeatureSource) featureSource).granuleTracker = tracker;
+        GranuleTracker tracker = new GranuleTracker();
+        GranuleStoreFinder finder = ((VectorMosaicFeatureSource) featureSource).finder;
+        finder.granuleTracker = tracker;
         Query q = new Query();
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory( null );
 
@@ -49,7 +50,7 @@ public class VectorMosaicFlatGeobufTest extends VectorMosaicTest{
             }
             assertEquals(1826, count);
         }
-        assertEquals(8, tracker.size());
+        assertEquals(8, tracker.getGranuleNames().size());
         Instant finish = Instant.now();
         long timeElapsed = Duration.between(start, finish).toMillis();
         Instant start2 = Instant.now();
@@ -62,7 +63,7 @@ public class VectorMosaicFlatGeobufTest extends VectorMosaicTest{
             }
             assertEquals(32178, count);
         }
-        assertEquals(55, tracker.size());
+        assertEquals(55, tracker.getGranuleNames().size());
         Instant finish2 = Instant.now();
         long timeElapsed2 = Duration.between(start2, finish2).toMillis();
         System.out.println("Mosaic Query Time elapsed: " + timeElapsed + "ms");
@@ -74,8 +75,9 @@ public class VectorMosaicFlatGeobufTest extends VectorMosaicTest{
     public void testGetMaxIndexHasExpressionAndFilter() throws Exception {
         Instant start = Instant.now();
         SimpleFeatureSource featureSource = MOSAIC_STORE.getFeatureSource(MOSAIC_TYPE_NAME);
-        Set<String> tracker = new HashSet<>();
-        ((VectorMosaicFeatureSource) featureSource).granuleTracker = tracker;
+        GranuleTracker tracker = new GranuleTracker();
+        GranuleStoreFinder finder = ((VectorMosaicFeatureSource) featureSource).finder;
+        finder.granuleTracker = tracker;
         PropertyName p = FF.property("rank");
         Query q = new Query();
         Filter f = FF.lessOrEqual(p, FF.literal(100));
